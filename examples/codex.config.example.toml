@@ -1,0 +1,19 @@
+# Example: ~/.codex/config.toml (Alibaba Token Plan section)
+# For the full provider comparison see the repo README.
+# WARNING: never commit a real key. This file reads from keychain, so it holds no plaintext key.
+
+model = "deepseek-v4.1-flash"
+model_provider = "Model_Studio_Token_Plan_Personal"
+model_catalog_json = "~/.codex/model-catalog.local.json"
+model_reasoning_effort = "xhigh"      # low | medium | xhigh
+
+[model_providers.Model_Studio_Token_Plan_Personal]
+name     = "Model_Studio_Token_Plan_Personal"
+base_url = "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
+wire_api = "responses"
+
+[model_providers.Model_Studio_Token_Plan_Personal.auth]
+command             = "/usr/bin/security"
+args                = ["find-generic-password", "-s", "qwen-token-plan", "-a", "codex", "-w"]
+timeout_ms          = 5000
+refresh_interval_ms = 0

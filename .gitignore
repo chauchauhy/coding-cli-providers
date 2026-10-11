@@ -1,0 +1,22 @@
+# Real config / secrets -- never commit
+*.bak
+*.bak-*
+settings.json
+config.toml
+auth.json
+model-catalog.local.json
+.env
+*secret*
+*credential*
+*.key
+
+# Keychain exports / temp
+*.p12
+*.pem
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

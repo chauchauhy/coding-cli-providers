@@ -1,0 +1,13 @@
+{
+  "theme": "dark",
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sk-sp-REPLACE_WITH_YOUR_KEY",
+    "ANTHROPIC_BASE_URL": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/apps/anthropic",
+    "ANTHROPIC_MODEL": "deepseek-v4.1-flash",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-v4.1-flash",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4.1-flash",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-v4-pro",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-v4.1-flash",
+    "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "1048576"
+  }
+}
