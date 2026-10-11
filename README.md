@@ -1,6 +1,6 @@
 # coding-cli-providers
 
-Wire **Codex** and **Claude Code** to alternative model providers on macOS.
+Wire **Codex** and **Claude Code** to alternative model providers on **macOS & Windows**.
 
 Currently covered:
 
@@ -8,6 +8,7 @@ Currently covered:
 - **OpenCode Go** (OpenCode's subscription provider)
 
 > ✅ Verified 2026-10-11 on macOS: both clients work against both providers, config-only.
+> See [Windows](#windows) for the platform differences.
 
 ---
 
@@ -21,6 +22,7 @@ Currently covered:
 | [`scripts/`](scripts/) | Reusable setup scripts |
 | [`reference/models.md`](reference/models.md) | Supported models, endpoints, limits |
 | [`reference/troubleshooting.md`](reference/troubleshooting.md) | Error reference table |
+| [Windows](#windows) | Path mapping and `env_key` setup for Windows |
 
 ---
 
@@ -102,6 +104,74 @@ See [`opencode-go/README.md`](opencode-go/README.md) — config-only, no scripts
 | Primary model | `model = "deepseek-v4.1-flash"` | `ANTHROPIC_MODEL` |
 | Context | `context_window` (catalog) | `CLAUDE_CODE_MAX_CONTEXT_TOKENS` |
 | Config file | `~/.codex/config.toml` | `~/.claude/settings.json` |
+
+---
+
+## Windows
+
+Everything above is macOS-specific. On Windows the endpoints, model IDs, config file
+formats, and auth-header rules are identical — only the **paths** and the **secret
+storage** change.
+
+### Path mapping
+
+| macOS | Windows |
+|---|---|
+| `~/.codex/config.toml` | `C:\Users\<user>\.codex\config.toml` |
+| `~/.codex/auth.json` | `C:\Users\<user>\.codex\auth.json` |
+| `~/.codex/model-catalog.local.json` | `C:\Users\<user>\.codex\model-catalog.local.json` |
+| `~/.claude/settings.json` | `C:\Users\<user>\.claude\settings.json` |
+| `~/.claude.json` | `C:\Users\<user>\.claude.json` |
+| `*.sh` scripts | PowerShell (`*.ps1`) |
+| `./scripts/verify.sh` | `.\scripts\verify.ps1` |
+
+### Secret storage: keychain → `env_key`
+
+Windows has no `/usr/bin/security` command, so the macOS keychain block does not
+work. Codex officially supports `env_key`, which is the recommended Windows approach.
+(`cmdkey` / PowerShell `CredentialManager` can substitute, but `env_key` is simpler.)
+
+**Codex — `config.toml`**
+
+```toml
+model = "deepseek-v4.1-flash"
+model_provider = "Model_Studio_Token_Plan_Personal"
+
+[model_providers.Model_Studio_Token_Plan_Personal]
+name     = "Model_Studio_Token_Plan_Personal"
+base_url = "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
+wire_api = "responses"
+env_key  = "ALIBABA_TOKEN_PLAN_KEY"
+```
+
+```powershell
+# Persistent (new terminals pick it up)
+setx ALIBABA_TOKEN_PLAN_KEY "sk-sp-YOUR_KEY"
+```
+
+**Claude Code — `settings.json`**
+
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sk-sp-YOUR_KEY",
+    "ANTHROPIC_BASE_URL": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/apps/anthropic",
+    "ANTHROPIC_MODEL": "deepseek-v4.1-flash"
+  }
+}
+```
+
+> ⚠️ On Windows, `ANTHROPIC_AUTH_TOKEN` (→ `Bearer`) works for Alibaba Token Plan,
+> but OpenCode Go requires `ANTHROPIC_API_KEY` (→ `x-api-key`). See
+> [`opencode-go/README.md`](opencode-go/README.md).
+
+### Client support
+
+| Client | Windows support |
+|---|---|
+| Claude Code | Requires **WSL** or **Git for Windows** (run from WSL / Git Bash) |
+| Codex | Native **Windows desktop app**, Windows sandbox, or WSL |
+| OpenCode | Native Windows support |
 
 ---
 
